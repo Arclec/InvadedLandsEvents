@@ -24,10 +24,24 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.golfing8.winespigot</groupId>
+            <artifactId>WineSpigot</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>C:/Development/libs/WineSpigot.jar</systemPath>
+        </dependency>
+        <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.18.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.neznamy.tab</groupId>
+            <artifactId>TAB</artifactId>
+            <version>5.2.0</version>
+            <scope>system</scope>
+            <systemPath>D:/locallibs/TAB.jar</systemPath>
         </dependency>
     </dependencies>
 

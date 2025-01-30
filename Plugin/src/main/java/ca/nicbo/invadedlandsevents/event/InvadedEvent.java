@@ -34,9 +34,7 @@ import ca.nicbo.invadedlandsevents.scoreboard.EventScoreboard;
 import ca.nicbo.invadedlandsevents.scoreboard.EventScoreboardLine;
 import ca.nicbo.invadedlandsevents.scoreboard.EventScoreboardManager;
 import ca.nicbo.invadedlandsevents.task.SyncedTask;
-import ca.nicbo.invadedlandsevents.util.CollectionUtils;
-import ca.nicbo.invadedlandsevents.util.ItemStackBuilder;
-import ca.nicbo.invadedlandsevents.util.SpigotUtils;
+import ca.nicbo.invadedlandsevents.util.*;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -224,6 +222,9 @@ public abstract class InvadedEvent implements Event, Listener {
         player.teleport(spawn);
         SpigotUtils.clear(player);
         eventScoreboardManager.removeScoreboard(player);
+        SkinUtil.setSkinFromUUID(player, player.getUniqueId());
+        TabHook.setNameTag(player, true);
+
 
         if (isState(EventState.STARTED)) {
             checkPlayerCount();
@@ -400,10 +401,14 @@ public abstract class InvadedEvent implements Event, Listener {
 
         for (Player player : players) {
             eventScoreboardManager.applyEndingScoreboard(player);
+            SkinUtil.setSkinFromUUID(player, player.getUniqueId());
+            TabHook.setNameTag(player, true);
         }
 
         for (Player spectator : spectators) {
             eventScoreboardManager.applyEndingScoreboard(spectator);
+            SkinUtil.setSkinFromUUID(spectator, spectator.getUniqueId());
+            TabHook.setNameTag(spectator, true);
         }
 
         Bukkit.getPluginManager().callEvent(new EventPostEndEvent(this));

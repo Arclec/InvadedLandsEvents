@@ -11,13 +11,19 @@ import ca.nicbo.invadedlandsevents.event.event.player.EventPlayerDamageByEventPl
 import ca.nicbo.invadedlandsevents.scoreboard.EventScoreboard;
 import ca.nicbo.invadedlandsevents.scoreboard.EventScoreboardLine;
 import ca.nicbo.invadedlandsevents.task.event.MatchCountdownTask;
+import ca.nicbo.invadedlandsevents.util.SkinUtil;
+import ca.nicbo.invadedlandsevents.util.SpigotUtils;
 import ca.nicbo.invadedlandsevents.util.StringUtils;
+import ca.nicbo.invadedlandsevents.util.TabHook;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.entity.PlayerDeathEvent;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Last Man Standing.
@@ -52,22 +58,22 @@ public class LastManStanding extends TimerEvent {
     public void onEventPlayerDamageByEventPlayer(EventPlayerDamageByEventPlayerEvent event) {
         super.onEventPlayerDamageByEventPlayer(event);
 
-        Player player = event.getPlayer();
-        if (event.isCancelled()) {
-            return;
-        }
+        if (matchCountdownTask.isRunning()) event.setCancelled(true);
+    }
 
-        if (matchCountdownTask.isRunning()) {
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void OnPlayerDeath(PlayerDeathEvent event) {
+        Player eliminated = event.getEntity();
+        if (isPlayerParticipating(eliminated) && isPlayerParticipating(eliminated.getKiller())) {
             event.setCancelled(true);
-            return;
-        }
-
-        if (event.isKillingBlow()) {
             broadcastMessage(Message.LMS_ELIMINATED.get()
-                    .replace("{player}", player.getName())
+                    .replace("{player}", eliminated.getName())
                     .replace("{remaining}", String.valueOf(getPlayersSize() - 1)));
-            event.doFakeDeath();
-            lose(player);
+            Bukkit.getScheduler().runTaskLater(getPlugin(), () -> {
+            lose(eliminated);
+            SkinUtil.setSkinFromUUID(eliminated, eliminated.getUniqueId());
+            TabHook.setNameTag(eliminated, true);}
+            , 10L);
         }
     }
 
@@ -80,6 +86,8 @@ public class LastManStanding extends TimerEvent {
             Player player = players.get(i);
             player.teleport(i % 2 == 0 ? startOne : startTwo);
             kit.apply(player);
+            SkinUtil.setSkinFromUUID(player, UUID.fromString("356b64ff-90e7-4b32-beb6-375c46cb5756"));
+            TabHook.setNameTag(player, false);
         }
 
         matchCountdownTask.start(getPlugin());

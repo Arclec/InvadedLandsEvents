@@ -4,6 +4,7 @@ import ca.nicbo.invadedlandsevents.api.event.Event;
 import ca.nicbo.invadedlandsevents.api.event.event.player.EventPlayerEvent;
 import ca.nicbo.invadedlandsevents.api.util.Validate;
 import ca.nicbo.invadedlandsevents.util.SpigotUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.Cancellable;
@@ -35,7 +36,10 @@ public class EventPlayerDamageByEventPlayerEvent extends EventPlayerEvent implem
     }
 
     public boolean isKillingBlow() {
-        return getPlayer().getHealth() - getFinalDamage() <= 0;
+        double health = getPlayer().getHealth();
+        double finalDamage = getFinalDamage();
+        double healthAfterDamage = health - finalDamage;
+        return healthAfterDamage <= 0;
     }
 
     public void doFakeDeath() {
